@@ -20,6 +20,10 @@ describe('formatArrivalTime', () => {
   test('returns "29 min" for 1799 seconds', () => {
     expect(formatArrivalTime(1799)).toBe('29 min');
   });
+
+  test('returns "Due" for negative values (already-departed bus)', () => {
+    expect(formatArrivalTime(-30)).toBe('Due');
+  });
 });
 
 describe('filterArrivals', () => {

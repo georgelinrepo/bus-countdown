@@ -5,6 +5,7 @@ function formatArrivalTime(timeToStation) {
   return `${Math.floor(timeToStation / 60)} min`;
 }
 
+// Keeps arrivals at exactly 30 min (1800s) — filters out anything strictly beyond.
 function filterArrivals(arrivals) {
   return arrivals
     .filter(a => a.timeToStation <= 1800)
@@ -19,6 +20,7 @@ async function searchStops(query) {
 }
 
 async function getNearbyStops(lat, lon) {
+  // TfL geo-lookup returns { stopPoints: [...] } (distinct from /Search which uses { matches: [...] })
   const url = `${TFL_BASE}/StopPoint?lat=${lat}&lon=${lon}&radius=500&stopTypes=NaptanPublicBusCoachTram&categories=none`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`TfL error ${res.status}`);

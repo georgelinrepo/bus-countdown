@@ -29,7 +29,7 @@ Appears as the user types in the search bar (debounced). Lists matching stops by
 Leaflet map centred on the user's current location. Blue markers for nearby stops (within 500m). Tapping a marker or a stop in the list below the map navigates to that stop's arrivals. If geolocation is denied, shows an explanation and falls back to the search view.
 
 ### Arrivals
-Live countdowns for all buses arriving at the selected stop, sorted by time. Grouped by route number. Auto-refreshes every 30 seconds. Heart icon to add/remove from favourites. Back button returns to previous view.
+Live countdowns for all buses arriving at the selected stop. Each arrival is one row showing route number badge, destination, and time. Rows sorted ascending by arrival time. Auto-refreshes every 30 seconds. Heart icon to add/remove from favourites. Back button returns to previous view.
 
 ---
 

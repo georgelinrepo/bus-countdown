@@ -23,9 +23,9 @@ function renderFavourites() {
     return;
   }
   list.innerHTML = '<div class="section-label">Favourites</div>' + favs.map(stop => `
-    <div class="stop-card" data-id="${stop.id}" data-name="${stop.name}" data-code="${stop.code || ''}">
-      <span class="stop-badge">${stop.code || '•'}</span>
-      <span class="stop-name">${stop.name}</span>
+    <div class="stop-card" data-id="${escHtml(stop.id)}" data-name="${escHtml(stop.name)}" data-code="${escHtml(stop.code || '')}">
+      <span class="stop-badge">${escHtml(stop.code || '•')}</span>
+      <span class="stop-name">${escHtml(stop.name)}</span>
       <span class="stop-arrow">›</span>
     </div>
   `).join('');
@@ -50,9 +50,9 @@ function renderSearchResults(stops) {
   }
   // Search API returns `id` (not `naptanId`) and has no `stopLetter`
   el.innerHTML = stops.map(stop => `
-    <div class="stop-card" data-id="${stop.id}" data-name="${stop.name}" data-code="">
+    <div class="stop-card" data-id="${escHtml(stop.id)}" data-name="${escHtml(stop.name)}" data-code="">
       <span class="stop-badge">•</span>
-      <span class="stop-name">${stop.name}</span>
+      <span class="stop-name">${escHtml(stop.name)}</span>
       <span class="stop-arrow">›</span>
     </div>
   `).join('');

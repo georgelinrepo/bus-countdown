@@ -28,11 +28,4 @@ async function getNearbyStops(lat, lon) {
   return data.stopPoints || [];
 }
 
-async function getArrivals(stopId) {
-  const res = await fetch(`${TFL_BASE}/StopPoint/${stopId}/Arrivals`);
-  if (!res.ok) throw new Error(`TfL error ${res.status}`);
-  const arrivals = await res.json();
-  return filterArrivals(arrivals);
-}
-
-if (typeof module !== 'undefined') module.exports = { formatArrivalTime, filterArrivals, searchStops, getNearbyStops, getArrivals };
+if (typeof module !== 'undefined') module.exports = { formatArrivalTime, filterArrivals, searchStops, getNearbyStops };

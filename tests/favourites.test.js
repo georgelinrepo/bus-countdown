@@ -43,3 +43,13 @@ test('isFavourite returns true for a saved stop', () => {
 test('isFavourite returns false for an unsaved stop', () => {
   expect(isFavourite('XYZ')).toBe(false);
 });
+
+test('addFavourite ignores null stop', () => {
+  addFavourite(null);
+  expect(getFavourites()).toHaveLength(0);
+});
+
+test('addFavourite ignores stop with no id', () => {
+  addFavourite({ name: 'No ID Stop' });
+  expect(getFavourites()).toHaveLength(0);
+});

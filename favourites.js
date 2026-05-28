@@ -9,6 +9,7 @@ function getFavourites() {
 }
 
 function addFavourite(stop) {
+  if (!stop || stop.id == null) return;
   const favs = getFavourites();
   if (!favs.find(f => f.id === stop.id)) {
     favs.push(stop);
@@ -17,8 +18,9 @@ function addFavourite(stop) {
 }
 
 function removeFavourite(stopId) {
-  const favs = getFavourites().filter(f => f.id !== stopId);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(favs));
+  const current = getFavourites();
+  if (!current.some(f => f.id === stopId)) return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(current.filter(f => f.id !== stopId)));
 }
 
 function isFavourite(stopId) {

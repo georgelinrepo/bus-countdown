@@ -1,5 +1,9 @@
 let _map = null;
 
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 function initMap(containerId, lat, lon) {
   if (_map) {
     _map.remove();
@@ -23,7 +27,7 @@ function initMap(containerId, lat, lon) {
 }
 
 function addStopMarker(map, stop, onSelect) {
-  const label = stop.commonName || stop.name || 'Stop';
+  const label = escHtml(stop.commonName || stop.name || 'Stop');
   const icon = L.divIcon({
     className: '',
     html: `<div class="stop-marker">${label}</div>`,
@@ -36,14 +40,15 @@ function addStopMarker(map, stop, onSelect) {
 
 function renderNearbyList(stops, containerId, onSelect) {
   const container = document.getElementById(containerId);
+  if (!container) return;
   if (stops.length === 0) {
     container.innerHTML = '<p class="empty-state">No bus stops found within 500m.</p>';
     return;
   }
   container.innerHTML = '<div class="section-label">Nearby stops</div>' + stops.map(stop => `
-    <div class="stop-card" data-id="${stop.naptanId}">
-      <span class="stop-badge">${stop.stopLetter || '•'}</span>
-      <span class="stop-name">${stop.commonName}</span>
+    <div class="stop-card" data-id="${escHtml(stop.naptanId)}">
+      <span class="stop-badge">${escHtml(stop.stopLetter || '•')}</span>
+      <span class="stop-name">${escHtml(stop.commonName)}</span>
       <span class="stop-dist">${Math.round(stop.distance)}m</span>
       <span class="stop-arrow">›</span>
     </div>
@@ -53,4 +58,4 @@ function renderNearbyList(stops, containerId, onSelect) {
   });
 }
 
-if (typeof module !== 'undefined') module.exports = { renderNearbyList };
+if (typeof module !== 'undefined') module.exports = { renderNearbyList, escHtml };

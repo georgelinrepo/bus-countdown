@@ -1,0 +1,36 @@
+const TFL_BASE = 'https://api.tfl.gov.uk';
+
+function formatArrivalTime(timeToStation) {
+  if (timeToStation < 60) return 'Due';
+  return `${Math.floor(timeToStation / 60)} min`;
+}
+
+function filterArrivals(arrivals) {
+  return arrivals
+    .filter(a => a.timeToStation <= 1800)
+    .sort((a, b) => a.timeToStation - b.timeToStation);
+}
+
+async function searchStops(query) {
+  const res = await fetch(`${TFL_BASE}/StopPoint/Search/${encodeURIComponent(query)}?modes=bus`);
+  if (!res.ok) throw new Error(`TfL error ${res.status}`);
+  const data = await res.json();
+  return data.matches || [];
+}
+
+async function getNearbyStops(lat, lon) {
+  const url = `${TFL_BASE}/StopPoint?lat=${lat}&lon=${lon}&radius=500&stopTypes=NaptanPublicBusCoachTram&categories=none`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`TfL error ${res.status}`);
+  const data = await res.json();
+  return data.stopPoints || [];
+}
+
+async function getArrivals(stopId) {
+  const res = await fetch(`${TFL_BASE}/StopPoint/${stopId}/Arrivals`);
+  if (!res.ok) throw new Error(`TfL error ${res.status}`);
+  const arrivals = await res.json();
+  return filterArrivals(arrivals);
+}
+
+if (typeof module !== 'undefined') module.exports = { formatArrivalTime, filterArrivals, searchStops, getNearbyStops, getArrivals };

@@ -1,4 +1,5 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
 
 :root {
   --tfl-blue: #0019A8;
@@ -60,6 +61,10 @@ html, body {
   cursor: pointer;
   padding: 0 6px 0 0;
   flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .btn-fav {
@@ -70,6 +75,11 @@ html, body {
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-fav.is-favourite { color: #ffcc00; }
@@ -92,7 +102,12 @@ html, body {
   background: var(--bg);
 }
 
-.search-input:focus { border-color: var(--tfl-blue); background: #fff; }
+.search-input:focus {
+  border-color: var(--tfl-blue);
+  background: #fff;
+  outline: 2px solid var(--tfl-blue);
+  outline-offset: 2px;
+}
 
 /* ── Near me button ── */
 .btn-near-me {
@@ -115,7 +130,6 @@ html, body {
 .list {
   flex: 1;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* ── Stop card (favourites + search results) ── */

@@ -7,6 +7,7 @@ const SHELL = [
   '/tfl.js',
   '/favourites.js',
   '/map.js',
+  '/manifest.json',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
 ];
@@ -32,9 +33,11 @@ self.addEventListener('fetch', e => {
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
-      return fetch(e.request).catch(() =>
-        new Response('<p>No internet connection.</p>', { headers: { 'Content-Type': 'text/html' } })
-      );
+      return fetch(e.request).catch(() => {
+        if (e.request.mode === 'navigate') {
+          return new Response('<p>No internet connection.</p>', { headers: { 'Content-Type': 'text/html' } });
+        }
+      });
     })
   );
 });

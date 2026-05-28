@@ -48,9 +48,10 @@ function renderSearchResults(stops) {
     el.hidden = false;
     return;
   }
+  // Search API returns `id` (not `naptanId`) and has no `stopLetter`
   el.innerHTML = stops.map(stop => `
-    <div class="stop-card" data-id="${stop.naptanId}" data-name="${stop.name}" data-code="${stop.stopLetter || ''}">
-      <span class="stop-badge">${stop.stopLetter || '•'}</span>
+    <div class="stop-card" data-id="${stop.id}" data-name="${stop.name}" data-code="">
+      <span class="stop-badge">•</span>
       <span class="stop-name">${stop.name}</span>
       <span class="stop-arrow">›</span>
     </div>

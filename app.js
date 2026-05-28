@@ -85,12 +85,12 @@ function renderArrivals(arrivals, rawCount) {
   list.innerHTML = arrivals.map(a => {
     const time = formatArrivalTime(a.timeToStation);
     const isDue = a.timeToStation < 60;
-    const loc = a.currentLocation ? `<div class="arrival-location">${a.currentLocation}</div>` : '';
+    const loc = a.currentLocation ? `<div class="arrival-location">${escHtml(a.currentLocation)}</div>` : '';
     return `
       <div class="arrival-row">
-        <span class="route-badge">${a.lineName}</span>
+        <span class="route-badge">${escHtml(a.lineName)}</span>
         <div class="arrival-info">
-          <div class="arrival-destination">${a.destinationName}</div>
+          <div class="arrival-destination">${escHtml(a.destinationName)}</div>
           ${loc}
         </div>
         <span class="arrival-time${isDue ? ' is-due' : ''}">${time}</span>
@@ -119,11 +119,13 @@ async function loadArrivals() {
 }
 
 function openStop(stop) {
+  if (_arrivalsTimer) { clearInterval(_arrivalsTimer); _arrivalsTimer = null; }
   _currentStop = stop;
   document.getElementById('arrivals-stop-name').textContent = stop.name;
   const favBtn = document.getElementById('btn-favourite');
   favBtn.textContent = isFavourite(stop.id) ? '♥' : '♡';
   favBtn.classList.toggle('is-favourite', isFavourite(stop.id));
+  document.getElementById('arrivals-list').innerHTML = '<p class="empty-state">Loading…</p>';
   showView('arrivals');
   loadArrivals();
   _arrivalsTimer = setInterval(loadArrivals, 30000);
@@ -132,6 +134,7 @@ function openStop(stop) {
 // ── Near me ──────────────────────────────────────────────────
 
 async function showNearby() {
+  clearSearch();
   showView('nearby');
   _previousView = 'nearby';
   const list = document.getElementById('nearby-list');
@@ -193,7 +196,10 @@ function init() {
 
   // Back buttons
   document.querySelectorAll('[data-back]').forEach(btn => {
-    btn.addEventListener('click', () => showView(btn.dataset.back));
+    btn.addEventListener('click', () => {
+      showView(btn.dataset.back);
+      if (btn.dataset.back === 'home') renderFavourites();
+    });
   });
 
   document.getElementById('arrivals-back').addEventListener('click', () => {

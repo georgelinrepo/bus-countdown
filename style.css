@@ -1,0 +1,261 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --tfl-blue: #0019A8;
+  --tfl-blue-dark: #00128a;
+  --text: #1a1a1a;
+  --text-muted: #888;
+  --border: #e5e5e5;
+  --bg: #f5f5f5;
+  --due-color: #d4380d;
+}
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ── Views ── */
+.view {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 480px;
+  margin: 0 auto;
+  background: #fff;
+  box-shadow: 0 0 40px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: var(--tfl-blue);
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.header-icon { font-size: 1.4rem; }
+
+.header-title {
+  font-size: 1rem;
+  font-weight: 600;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 6px 0 0;
+  flex-shrink: 0;
+}
+
+.btn-fav {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.btn-fav.is-favourite { color: #ffcc00; }
+
+/* ── Search ── */
+.search-wrap {
+  padding: 12px 16px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  background: var(--bg);
+}
+
+.search-input:focus { border-color: var(--tfl-blue); background: #fff; }
+
+/* ── Near me button ── */
+.btn-near-me {
+  margin: 12px 16px 4px;
+  padding: 12px;
+  background: var(--tfl-blue);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  flex-shrink: 0;
+}
+
+.btn-near-me:active { background: var(--tfl-blue-dark); }
+
+/* ── Lists ── */
+.list {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Stop card (favourites + search results) ── */
+.stop-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  background: #fff;
+}
+
+.stop-card:active { background: var(--bg); }
+
+.stop-badge {
+  background: var(--tfl-blue);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.stop-name {
+  flex: 1;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.stop-dist {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.stop-arrow { color: #ccc; flex-shrink: 0; }
+
+/* ── Arrival row ── */
+.arrival-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.route-badge {
+  background: var(--tfl-blue);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  min-width: 42px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.arrival-info { flex: 1; }
+
+.arrival-destination {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.arrival-location {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.arrival-time {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--tfl-blue);
+  white-space: nowrap;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.arrival-time.is-due { color: var(--due-color); }
+
+/* ── Empty & error states ── */
+.empty-state, .error-state {
+  padding: 32px 24px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.retry-btn {
+  margin-top: 12px;
+  padding: 8px 20px;
+  background: var(--tfl-blue);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* ── Map ── */
+.map-container {
+  height: 45vh;
+  flex-shrink: 0;
+}
+
+/* ── You marker & stop marker ── */
+.you-marker {
+  width: 14px;
+  height: 14px;
+  background: #4285F4;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(66,133,244,0.3);
+}
+
+.stop-marker {
+  background: var(--tfl-blue);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+
+/* ── Section label ── */
+.section-label {
+  padding: 10px 16px 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}

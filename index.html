@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Bus Countdown</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0019A8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+
+  <!-- ── Home view ── -->
+  <div id="view-home" class="view">
+    <header class="header">
+      <span class="header-icon">🚌</span>
+      <h1 class="header-title">Bus Countdown</h1>
+    </header>
+    <div class="search-wrap">
+      <input id="search-input" type="search" class="search-input" placeholder="Stop name or code…" autocomplete="off" autocorrect="off">
+    </div>
+    <div id="search-results" class="list" hidden></div>
+    <button id="btn-near-me" class="btn-near-me">📍 Stops near me</button>
+    <div id="favourites-list" class="list"></div>
+  </div>
+
+  <!-- ── Near me view ── -->
+  <div id="view-nearby" class="view" hidden>
+    <header class="header">
+      <button class="btn-back" data-back="home">‹</button>
+      <h1 class="header-title">Stops Near Me</h1>
+    </header>
+    <div id="nearby-map" class="map-container"></div>
+    <div id="nearby-list" class="list"></div>
+  </div>
+
+  <!-- ── Arrivals view ── -->
+  <div id="view-arrivals" class="view" hidden>
+    <header class="header">
+      <button class="btn-back" id="arrivals-back">‹</button>
+      <h1 class="header-title" id="arrivals-stop-name"></h1>
+      <button id="btn-favourite" class="btn-fav" aria-label="Toggle favourite">♡</button>
+    </header>
+    <div id="arrivals-list" class="list"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="favourites.js"></script>
+  <script src="tfl.js"></script>
+  <script src="map.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

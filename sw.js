@@ -1,4 +1,4 @@
-const CACHE = 'bus-countdown-v2';
+const CACHE = 'bus-countdown-v3';
 const SHELL = [
   './',
   './index.html',

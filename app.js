@@ -127,6 +127,13 @@ function openStop(stop) {
   if (_arrivalsTimer) { clearInterval(_arrivalsTimer); _arrivalsTimer = null; }
   _currentStop = stop;
   document.getElementById('arrivals-stop-name').textContent = stop.name;
+  const letterEl = document.getElementById('arrivals-stop-letter');
+  if (stop.code) {
+    letterEl.textContent = stop.code;
+    letterEl.hidden = false;
+  } else {
+    letterEl.hidden = true;
+  }
   const favBtn = document.getElementById('btn-favourite');
   favBtn.textContent = isFavourite(stop.id) ? '♥' : '♡';
   favBtn.classList.toggle('is-favourite', isFavourite(stop.id));

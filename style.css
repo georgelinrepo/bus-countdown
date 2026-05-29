@@ -84,6 +84,16 @@ html, body {
 
 .btn-fav.is-favourite { color: #ffcc00; }
 
+.header-stop-letter {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
 /* ── Search ── */
 .search-wrap {
   padding: 12px 16px;

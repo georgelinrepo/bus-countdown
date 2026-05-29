@@ -57,6 +57,9 @@
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js')
         .catch(err => console.warn('SW registration failed:', err));
+      navigator.serviceWorker.addEventListener('message', e => {
+        if (e.data?.type === 'SW_UPDATED') window.location.reload();
+      });
     }
   </script>
 </body>

@@ -93,12 +93,13 @@ function renderArrivals(arrivals, rawCount) {
     const time = formatArrivalTime(a.timeToStation);
     const isDue = a.timeToStation < 60;
     const loc = a.currentLocation ? `<div class="arrival-location">${escHtml(a.currentLocation)}</div>` : '';
+    const stop = a.platformName ? `<div class="arrival-location">Stop ${escHtml(a.platformName)}</div>` : '';
     return `
       <div class="arrival-row">
         <span class="route-badge">${escHtml(a.lineName)}</span>
         <div class="arrival-info">
           <div class="arrival-destination">${escHtml(a.destinationName)}</div>
-          ${loc}
+          ${stop}${loc}
         </div>
         <span class="arrival-time${isDue ? ' is-due' : ''}">${time}</span>
       </div>

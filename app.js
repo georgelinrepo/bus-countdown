@@ -48,14 +48,20 @@ function renderSearchResults(stops) {
     el.hidden = false;
     return;
   }
-  // Search API returns `id` (not `naptanId`) and has no `stopLetter`
-  el.innerHTML = stops.map(stop => `
-    <div class="stop-card" data-id="${escHtml(stop.id)}" data-name="${escHtml(stop.name)}" data-code="">
-      <span class="stop-badge">•</span>
-      <span class="stop-name">${escHtml(stop.name)}</span>
-      <span class="stop-arrow">›</span>
-    </div>
-  `).join('');
+  el.innerHTML = stops.map(stop => {
+    const letter = getStopLetter(stop.id);
+    const towards = stop.towards ? `<span class="stop-towards">→ ${escHtml(stop.towards)}</span>` : '';
+    return `
+      <div class="stop-card" data-id="${escHtml(stop.id)}" data-name="${escHtml(stop.name)}" data-code="${escHtml(letter || '')}">
+        <span class="stop-badge${letter ? '' : ' stop-badge--group'}">${escHtml(letter || '•')}</span>
+        <div class="stop-info">
+          <span class="stop-name">${escHtml(stop.name)}</span>
+          ${towards}
+        </div>
+        <span class="stop-arrow">›</span>
+      </div>
+    `;
+  }).join('');
   el.hidden = false;
   el.querySelectorAll('.stop-card').forEach(card => {
     card.addEventListener('click', () => {
@@ -104,9 +110,7 @@ async function loadArrivals() {
   if (!_currentStop) return;
   const list = document.getElementById('arrivals-list');
   try {
-    const raw = await fetch(`https://api.tfl.gov.uk/StopPoint/${_currentStop.id}/Arrivals`);
-    if (!raw.ok) throw new Error(`HTTP ${raw.status}`);
-    const all = await raw.json();
+    const all = await getArrivals(_currentStop.id);
     const filtered = filterArrivals(all);
     renderArrivals(filtered, all.length);
   } catch {

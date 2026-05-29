@@ -156,10 +156,30 @@ html, body {
   flex-shrink: 0;
 }
 
+.stop-badge--group {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1.5px solid var(--border);
+}
+
+.stop-info {
+  flex: 1;
+  min-width: 0;
+}
+
 .stop-name {
   flex: 1;
   font-size: 0.95rem;
   font-weight: 500;
+}
+
+.stop-towards {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .stop-dist {

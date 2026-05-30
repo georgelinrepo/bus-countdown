@@ -132,6 +132,33 @@ async function loadGroupArrivals() {
   list.innerHTML = html;
 }
 
+function openGroupPicker(stop, lineName) {
+  const groups = getGroups();
+  if (groups.length === 0) {
+    openGroupEditor(null, 'home', { stopId: stop.id, stopName: stop.name, lineName });
+    return;
+  }
+  const overlay = document.getElementById('group-picker-overlay');
+  const list = document.getElementById('group-picker-list');
+  list.innerHTML = groups.map(g => `
+    <div class="modal-group-row" data-id="${escHtml(g.id)}">${escHtml(g.name)}</div>
+  `).join('') + `<div class="modal-group-row modal-group-row--new">+ Create new group</div>`;
+
+  list.querySelectorAll('.modal-group-row').forEach((row, i) => {
+    row.addEventListener('click', () => {
+      if (i === groups.length) {
+        overlay.hidden = true;
+        openGroupEditor(null, 'home', { stopId: stop.id, stopName: stop.name, lineName });
+      } else {
+        addEntryToGroup(groups[i].id, { stopId: stop.id, stopName: stop.name, lineName });
+        overlay.hidden = true;
+      }
+    });
+  });
+
+  overlay.hidden = false;
+}
+
 function openGroupEditor(group, origin, preEntry) {
   _groupEditorGroup = group
     ? { ...group, entries: [...group.entries] }
@@ -283,10 +310,17 @@ function renderArrivals(arrivals, rawCount) {
           <div class="arrival-destination">${escHtml(a.destinationName)}</div>
           ${stop}${loc}
         </div>
+        <button class="btn-add-to-group" data-line="${escHtml(a.lineName)}" aria-label="Add to group">+</button>
         <span class="arrival-time${isDue ? ' is-due' : ''}">${time}</span>
       </div>
     `;
   }).join('');
+  list.querySelectorAll('.btn-add-to-group').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openGroupPicker(_currentStop, btn.dataset.line);
+    });
+  });
 }
 
 async function loadArrivals() {
@@ -499,6 +533,14 @@ function init() {
         resultsEl.hidden = false;
       }
     }, 300);
+  });
+
+  document.getElementById('group-picker-close').addEventListener('click', () => {
+    document.getElementById('group-picker-overlay').hidden = true;
+  });
+
+  document.getElementById('group-picker-overlay').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) e.currentTarget.hidden = true;
   });
 
   // Favourite toggle

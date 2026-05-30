@@ -24,7 +24,14 @@
     </div>
     <div id="search-results" class="list" hidden></div>
     <button id="btn-near-me" class="btn-near-me">📍 Stops near me</button>
-    <div id="favourites-list" class="list"></div>
+    <div class="list" id="home-scroll">
+      <div id="favourites-list"></div>
+      <div class="section-header">
+        <span class="section-label-inline">Groups</span>
+        <button id="btn-new-group" class="btn-section-action">+ New</button>
+      </div>
+      <div id="groups-list"></div>
+    </div>
   </div>
 
   <!-- ── Near me view ── -->
@@ -48,8 +55,49 @@
     <div id="arrivals-list" class="list"></div>
   </div>
 
+  <!-- ── Group view ── -->
+  <div id="view-group" class="view" hidden>
+    <header class="header">
+      <button class="btn-back" id="group-back">‹</button>
+      <h1 class="header-title" id="group-name"></h1>
+      <button id="btn-group-edit" class="btn-edit" aria-label="Edit group">✎</button>
+    </header>
+    <div id="group-arrivals-list" class="list"></div>
+  </div>
+
+  <!-- ── Group editor ── -->
+  <div id="view-group-editor" class="view" hidden>
+    <header class="header">
+      <button class="btn-back" id="group-editor-back">‹</button>
+      <h1 class="header-title" id="group-editor-title">New Group</h1>
+      <button id="btn-group-save" class="btn-save">Save</button>
+    </header>
+    <div class="group-editor-content">
+      <input id="group-name-input" type="text" class="group-name-input" placeholder="Group name…" autocomplete="off">
+      <div id="group-editor-entries"></div>
+      <div class="search-wrap">
+        <input id="group-editor-search" type="search" class="search-input" placeholder="Add a stop…" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+      </div>
+      <div id="group-editor-search-results" hidden></div>
+      <div id="group-editor-route-picker" hidden></div>
+      <button id="btn-delete-group" class="btn-delete-group" hidden>Delete group</button>
+    </div>
+  </div>
+
+  <!-- ── Group picker modal ── -->
+  <div id="group-picker-overlay" class="modal-overlay" hidden>
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <span class="modal-title">Add to group</span>
+        <button id="group-picker-close" class="modal-close">✕</button>
+      </div>
+      <div id="group-picker-list" class="list"></div>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="favourites.js"></script>
+  <script src="groups.js"></script>
   <script src="tfl.js"></script>
   <script src="map.js"></script>
   <script src="app.js"></script>

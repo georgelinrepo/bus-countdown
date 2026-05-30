@@ -9,6 +9,7 @@ function getGroups() {
 }
 
 function saveGroup(group) {
+  if (!group || group.id == null || !group.name) return;
   const groups = getGroups();
   const idx = groups.findIndex(g => g.id === group.id);
   if (idx === -1) {

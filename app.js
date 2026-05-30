@@ -1,6 +1,11 @@
 let _previousView = 'home';
 let _arrivalsTimer = null;
 let _currentStop = null;
+let _currentGroup = null;
+let _groupTimer = null;
+let _groupEditorOrigin = 'home';
+let _groupEditorGroup = null;
+let _groupEditorSearchTimer = null;
 
 // ── View router ──────────────────────────────────────────────
 
@@ -8,6 +13,10 @@ function showView(id) {
   if (_arrivalsTimer && id !== 'arrivals') {
     clearInterval(_arrivalsTimer);
     _arrivalsTimer = null;
+  }
+  if (_groupTimer && id !== 'group') {
+    clearInterval(_groupTimer);
+    _groupTimer = null;
   }
   document.querySelectorAll('.view').forEach(v => { v.hidden = true; });
   document.getElementById(`view-${id}`).hidden = false;
@@ -35,6 +44,92 @@ function renderFavourites() {
       openStop({ id: card.dataset.id, name: card.dataset.name, code: card.dataset.code });
     });
   });
+}
+
+function renderGroups() {
+  const list = document.getElementById('groups-list');
+  const groups = getGroups();
+  if (groups.length === 0) {
+    list.innerHTML = '';
+    return;
+  }
+  list.innerHTML = groups.map(g => `
+    <div class="stop-card group-card" data-id="${escHtml(g.id)}">
+      <span class="stop-name">${escHtml(g.name)}</span>
+      <span class="group-entry-count">${g.entries.length} route${g.entries.length !== 1 ? 's' : ''}</span>
+      <span class="stop-arrow">›</span>
+    </div>
+  `).join('');
+  list.querySelectorAll('.group-card').forEach(card => {
+    const group = groups.find(g => g.id === card.dataset.id);
+    card.addEventListener('click', () => openGroup(group));
+  });
+}
+
+function openGroup(group) {
+  if (_groupTimer) { clearInterval(_groupTimer); _groupTimer = null; }
+  _currentGroup = group;
+  document.getElementById('group-name').textContent = group.name;
+  document.getElementById('group-arrivals-list').innerHTML = '<p class="empty-state">Loading…</p>';
+  showView('group');
+  loadGroupArrivals();
+  _groupTimer = setInterval(loadGroupArrivals, 30000);
+}
+
+async function loadGroupArrivals() {
+  if (!_currentGroup) return;
+  const list = document.getElementById('group-arrivals-list');
+
+  if (_currentGroup.entries.length === 0) {
+    list.innerHTML = '<p class="empty-state">Group is empty — add some routes to get started.</p>';
+    return;
+  }
+
+  const uniqueStopIds = [...new Set(_currentGroup.entries.map(e => e.stopId))];
+  const results = await Promise.allSettled(uniqueStopIds.map(id => getArrivals(id)));
+
+  const erroredCount = results.filter(r => r.status === 'rejected').length;
+  let merged = [];
+
+  results.forEach((result, i) => {
+    if (result.status === 'rejected') return;
+    const stopId = uniqueStopIds[i];
+    const pinnedEntries = _currentGroup.entries.filter(e => e.stopId === stopId);
+    const pinnedLines = pinnedEntries.map(e => e.lineName);
+    const stopName = pinnedEntries[0].stopName;
+    result.value
+      .filter(a => pinnedLines.includes(a.lineName))
+      .forEach(a => merged.push({ ...a, _stopName: stopName }));
+  });
+
+  if (erroredCount === uniqueStopIds.length) {
+    list.innerHTML = `<div class="error-state">Could not load arrivals.<br><button class="retry-btn" id="group-retry-btn">Try again</button></div>`;
+    document.getElementById('group-retry-btn').addEventListener('click', loadGroupArrivals);
+    return;
+  }
+
+  merged = filterArrivals(merged);
+
+  let html = erroredCount > 0 ? '<p class="group-partial-error">Some stops could not be loaded.</p>' : '';
+  if (merged.length === 0) {
+    html += '<p class="empty-state">No buses in the next 30 minutes.</p>';
+  } else {
+    html += merged.map(a => {
+      const time = formatArrivalTime(a.timeToStation);
+      const isDue = a.timeToStation < 60;
+      return `
+        <div class="arrival-row">
+          <span class="route-badge">${escHtml(a.lineName)}</span>
+          <div class="arrival-info">
+            <div class="arrival-destination">${escHtml(a.destinationName)}</div>
+            <div class="arrival-location">${escHtml(a._stopName)}</div>
+          </div>
+          <span class="arrival-time${isDue ? ' is-due' : ''}">${time}</span>
+        </div>
+      `;
+    }).join('');
+  }
+  list.innerHTML = html;
 }
 
 // ── Search ───────────────────────────────────────────────────
@@ -187,6 +282,7 @@ async function showNearby() {
 
 function init() {
   renderFavourites();
+  renderGroups();
 
   // Search
   document.getElementById('search-input').addEventListener('input', (e) => {
@@ -211,13 +307,25 @@ function init() {
   document.querySelectorAll('[data-back]').forEach(btn => {
     btn.addEventListener('click', () => {
       showView(btn.dataset.back);
-      if (btn.dataset.back === 'home') renderFavourites();
+      if (btn.dataset.back === 'home') {
+        renderFavourites();
+        renderGroups();
+      }
     });
   });
 
   document.getElementById('arrivals-back').addEventListener('click', () => {
     showView(_previousView);
-    if (_previousView === 'home') renderFavourites();
+    if (_previousView === 'home') {
+      renderFavourites();
+      renderGroups();
+    }
+  });
+
+  document.getElementById('group-back').addEventListener('click', () => {
+    showView('home');
+    renderFavourites();
+    renderGroups();
   });
 
   // Favourite toggle

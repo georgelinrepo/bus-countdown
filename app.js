@@ -132,6 +132,93 @@ async function loadGroupArrivals() {
   list.innerHTML = html;
 }
 
+function openGroupEditor(group, origin, preEntry) {
+  _groupEditorGroup = group
+    ? { ...group, entries: [...group.entries] }
+    : { id: String(Date.now()), name: '', entries: [] };
+  _groupEditorOrigin = origin || 'home';
+
+  if (preEntry) {
+    const dup = _groupEditorGroup.entries.some(e => e.stopId === preEntry.stopId && e.lineName === preEntry.lineName);
+    if (!dup) _groupEditorGroup.entries.push(preEntry);
+  }
+
+  document.getElementById('group-editor-title').textContent = group ? 'Edit Group' : 'New Group';
+  document.getElementById('group-name-input').value = _groupEditorGroup.name;
+  document.getElementById('group-editor-search').value = '';
+  document.getElementById('group-editor-search-results').hidden = true;
+  document.getElementById('group-editor-search-results').innerHTML = '';
+  document.getElementById('group-editor-route-picker').hidden = true;
+  document.getElementById('group-editor-route-picker').innerHTML = '';
+  document.getElementById('btn-delete-group').hidden = !group;
+
+  renderEditorEntries();
+  showView('group-editor');
+}
+
+function renderEditorEntries() {
+  const el = document.getElementById('group-editor-entries');
+  if (_groupEditorGroup.entries.length === 0) {
+    el.innerHTML = '<p class="empty-state">No routes added yet.</p>';
+    return;
+  }
+  el.innerHTML = _groupEditorGroup.entries.map((e, i) => `
+    <div class="group-entry-row">
+      <span class="route-badge">${escHtml(e.lineName)}</span>
+      <span class="stop-name">${escHtml(e.stopName)}</span>
+      <button class="btn-remove-entry" data-index="${i}" aria-label="Remove">×</button>
+    </div>
+  `).join('');
+  el.querySelectorAll('.btn-remove-entry').forEach(btn => {
+    btn.addEventListener('click', () => {
+      _groupEditorGroup.entries.splice(Number(btn.dataset.index), 1);
+      renderEditorEntries();
+    });
+  });
+}
+
+async function showEditorRoutePicker(stopId, stopName) {
+  const routeEl = document.getElementById('group-editor-route-picker');
+  document.getElementById('group-editor-search-results').hidden = true;
+  routeEl.innerHTML = '<p class="empty-state">Loading routes…</p>';
+  routeEl.hidden = false;
+
+  try {
+    const arrivals = await getArrivals(stopId);
+    const seen = new Set();
+    const lines = arrivals
+      .filter(a => { if (seen.has(a.lineName)) return false; seen.add(a.lineName); return true; })
+      .sort((a, b) => a.lineName.localeCompare(b.lineName, undefined, { numeric: true }));
+
+    if (!lines.length) {
+      routeEl.innerHTML = '<p class="empty-state">No buses currently at this stop.</p>';
+      return;
+    }
+
+    routeEl.innerHTML = '<div class="section-label">Tap a route to add</div>' + lines.map(a => `
+      <div class="route-pick-row" data-line="${escHtml(a.lineName)}">
+        <span class="route-badge">${escHtml(a.lineName)}</span>
+        <span class="stop-name">${escHtml(a.destinationName)}</span>
+        <span class="stop-arrow">›</span>
+      </div>
+    `).join('');
+
+    routeEl.querySelectorAll('.route-pick-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const entry = { stopId, stopName, lineName: row.dataset.line };
+        const dup = _groupEditorGroup.entries.some(e => e.stopId === entry.stopId && e.lineName === entry.lineName);
+        if (!dup) _groupEditorGroup.entries.push(entry);
+        document.getElementById('group-editor-search').value = '';
+        routeEl.hidden = true;
+        routeEl.innerHTML = '';
+        renderEditorEntries();
+      });
+    });
+  } catch {
+    routeEl.innerHTML = '<p class="empty-state">Could not load routes. Try again.</p>';
+  }
+}
+
 // ── Search ───────────────────────────────────────────────────
 
 let _searchTimer = null;
@@ -326,6 +413,92 @@ function init() {
     showView('home');
     renderFavourites();
     renderGroups();
+  });
+
+  document.getElementById('btn-new-group').addEventListener('click', () => {
+    openGroupEditor(null, 'home', null);
+  });
+
+  document.getElementById('btn-group-edit').addEventListener('click', () => {
+    openGroupEditor(_currentGroup, 'group', null);
+  });
+
+  document.getElementById('group-editor-back').addEventListener('click', () => {
+    if (_groupEditorOrigin === 'group') {
+      showView('group');
+      loadGroupArrivals();
+      _groupTimer = setInterval(loadGroupArrivals, 30000);
+    } else {
+      showView('home');
+      renderFavourites();
+      renderGroups();
+    }
+  });
+
+  document.getElementById('btn-group-save').addEventListener('click', () => {
+    const name = document.getElementById('group-name-input').value.trim();
+    if (!name) {
+      document.getElementById('group-name-input').focus();
+      return;
+    }
+    _groupEditorGroup.name = name;
+    saveGroup(_groupEditorGroup);
+    if (_groupEditorOrigin === 'group') {
+      _currentGroup = _groupEditorGroup;
+      document.getElementById('group-name').textContent = _currentGroup.name;
+      showView('group');
+      loadGroupArrivals();
+      _groupTimer = setInterval(loadGroupArrivals, 30000);
+    } else {
+      showView('home');
+      renderFavourites();
+      renderGroups();
+    }
+  });
+
+  document.getElementById('btn-delete-group').addEventListener('click', () => {
+    if (!_groupEditorGroup) return;
+    deleteGroup(_groupEditorGroup.id);
+    showView('home');
+    renderFavourites();
+    renderGroups();
+  });
+
+  document.getElementById('group-editor-search').addEventListener('input', (e) => {
+    const q = e.target.value.trim();
+    const resultsEl = document.getElementById('group-editor-search-results');
+    const routeEl = document.getElementById('group-editor-route-picker');
+    routeEl.hidden = true;
+    routeEl.innerHTML = '';
+    if (!q) { resultsEl.hidden = true; resultsEl.innerHTML = ''; return; }
+    clearTimeout(_groupEditorSearchTimer);
+    _groupEditorSearchTimer = setTimeout(async () => {
+      try {
+        const stops = await searchStops(q);
+        if (!stops.length) {
+          resultsEl.innerHTML = '<p class="empty-state">No stops found.</p>';
+          resultsEl.hidden = false;
+          return;
+        }
+        resultsEl.innerHTML = stops.map(stop => {
+          const letter = getStopLetter(stop.id);
+          return `
+            <div class="stop-card" data-id="${escHtml(stop.id)}" data-name="${escHtml(stop.name)}">
+              <span class="stop-badge${letter ? '' : ' stop-badge--group'}">${escHtml(letter || '•')}</span>
+              <span class="stop-name">${escHtml(stop.name)}</span>
+              <span class="stop-arrow">›</span>
+            </div>
+          `;
+        }).join('');
+        resultsEl.hidden = false;
+        resultsEl.querySelectorAll('.stop-card').forEach(card => {
+          card.addEventListener('click', () => showEditorRoutePicker(card.dataset.id, card.dataset.name));
+        });
+      } catch {
+        resultsEl.innerHTML = '<p class="empty-state">Search failed. Check your connection.</p>';
+        resultsEl.hidden = false;
+      }
+    }, 300);
   });
 
   // Favourite toggle

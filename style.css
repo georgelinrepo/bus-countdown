@@ -303,3 +303,215 @@ html, body {
   background: var(--bg);
   border-bottom: 1px solid var(--border);
 }
+
+/* ── Home scroll container (wraps favourites + groups) ── */
+#home-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+/* ── Groups section header ── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px 4px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.section-label-inline {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.btn-section-action {
+  background: none;
+  border: none;
+  color: var(--tfl-blue);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* ── Group card ── */
+.group-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  background: #fff;
+}
+
+.group-card:active { background: var(--bg); }
+
+.group-entry-count {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* ── Header edit / save buttons ── */
+.btn-edit, .btn-save {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+/* ── Group editor ── */
+.group-editor-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+}
+
+.group-name-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.group-entry-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  background: #fff;
+}
+
+.btn-remove-entry {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.4rem;
+  cursor: pointer;
+  margin-left: auto;
+  padding: 0 0 0 8px;
+  line-height: 1;
+}
+
+/* ── Route pick list ── */
+.route-pick-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  background: #fff;
+}
+
+.route-pick-row:active { background: var(--bg); }
+
+/* ── Delete group button ── */
+.btn-delete-group {
+  margin: 16px;
+  padding: 10px;
+  background: none;
+  border: 1.5px solid var(--due-color);
+  color: var(--due-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ── Add-to-group button on arrival rows ── */
+.btn-add-to-group {
+  background: none;
+  border: 1.5px solid var(--border);
+  color: var(--tfl-blue);
+  font-size: 1rem;
+  font-weight: 700;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.btn-add-to-group:active { background: var(--bg); }
+
+/* ── Group partial error ── */
+.group-partial-error {
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  color: var(--due-color);
+  border-bottom: 1px solid var(--border);
+  background: #fff8f6;
+}
+
+/* ── Modal overlay ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: flex-end;
+  z-index: 100;
+}
+
+.modal-sheet {
+  background: #fff;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  border-radius: 16px 16px 0 0;
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.modal-title { font-size: 0.95rem; font-weight: 600; }
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+}
+
+.modal-group-row {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.modal-group-row:active { background: var(--bg); }
+.modal-group-row--new { color: var(--tfl-blue); font-weight: 600; }

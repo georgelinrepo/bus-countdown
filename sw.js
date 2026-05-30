@@ -1,4 +1,4 @@
-const CACHE = 'bus-countdown-v7';
+const CACHE = 'bus-countdown-v8';
 const SHELL = [
   './',
   './index.html',
@@ -6,6 +6,7 @@ const SHELL = [
   './app.js',
   './tfl.js',
   './favourites.js',
+  './groups.js',
   './map.js',
   './manifest.json',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',

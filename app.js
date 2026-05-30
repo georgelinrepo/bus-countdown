@@ -135,7 +135,7 @@ async function loadGroupArrivals() {
 function openGroupPicker(stop, lineName) {
   const groups = getGroups();
   if (groups.length === 0) {
-    openGroupEditor(null, 'home', { stopId: stop.id, stopName: stop.name, lineName });
+    openGroupEditor(null, 'arrivals', { stopId: stop.id, stopName: stop.name, lineName });
     return;
   }
   const overlay = document.getElementById('group-picker-overlay');
@@ -148,7 +148,7 @@ function openGroupPicker(stop, lineName) {
     row.addEventListener('click', () => {
       if (i === groups.length) {
         overlay.hidden = true;
-        openGroupEditor(null, 'home', { stopId: stop.id, stopName: stop.name, lineName });
+        openGroupEditor(null, 'arrivals', { stopId: stop.id, stopName: stop.name, lineName });
       } else {
         addEntryToGroup(groups[i].id, { stopId: stop.id, stopName: stop.name, lineName });
         overlay.hidden = true;
@@ -462,6 +462,10 @@ function init() {
       showView('group');
       loadGroupArrivals();
       _groupTimer = setInterval(loadGroupArrivals, 30000);
+    } else if (_groupEditorOrigin === 'arrivals') {
+      showView('arrivals');
+      loadArrivals();
+      _arrivalsTimer = setInterval(loadArrivals, 30000);
     } else {
       showView('home');
       renderFavourites();
@@ -483,6 +487,10 @@ function init() {
       showView('group');
       loadGroupArrivals();
       _groupTimer = setInterval(loadGroupArrivals, 30000);
+    } else if (_groupEditorOrigin === 'arrivals') {
+      showView('arrivals');
+      loadArrivals();
+      _arrivalsTimer = setInterval(loadArrivals, 30000);
     } else {
       showView('home');
       renderFavourites();
@@ -492,6 +500,7 @@ function init() {
 
   document.getElementById('btn-delete-group').addEventListener('click', () => {
     if (!_groupEditorGroup) return;
+    if (!confirm(`Delete "${_groupEditorGroup.name}"?`)) return;
     deleteGroup(_groupEditorGroup.id);
     showView('home');
     renderFavourites();
